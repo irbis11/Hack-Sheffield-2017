@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>HackSheffield</title>
+        <!-- <link rel="icon" type="image/ico"  href="./favicon.ico" /> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="pitch.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="player.js"></script>
+
+        <style>
+
+        body { font: 14pt 'Alike', sans-serif;}
+        #note { font-size: 164px; }
+        .droptarget { background-color: #348781}
+        div.confident { color: black; }
+        div.vague { color: lightgrey; }
+        #note { display: inline-block; height:180px; text-align: left;}
+
+        #detector { width: 300px; height: 300px; border: 4px solid gray; border-radius: 8px; text-align: center; padding-top: 10px;}
+        #output { width: 300px; height: 42px; }
+        #flat { display: none; }
+        #sharp { display: none; }
+        .flat #flat { display: inline; }
+        .sharp #sharp { display: inline; }
+
+        </style>
+
+    </head>
+    <body>
+
+      <style>
+
+      /* unvisited link */
+      a:link {
+          color: #34495e;
+      }
+
+      /* visited link */
+      a:visited {
+          color: #34495e;
+      }
+
+      /* mouse over link */
+      a:hover {
+          color: #34495e;
+      }
+
+      /* selected link */
+      a:active {
+          color: #34495e;
+      }
+
+        .button_bar{
+          width:100%;
+          height:50px;
+          background-color: #ecf0f1;
+          color: #34495e;
+        }
+
+        .paddle{
+          padding:2%;
+          width:46%;
+          text-align: center;
+          font-size: 1.2em;
+          float:left;
+        }
+
+      </style>
+
+      <div id="button_bar" class="button_bar">
+        <a href="#">
+          <div id="left_paddle" class="paddle">
+            Play As Left
+          </div>
+        </a>
+        <a href="#">
+          <div id="right_paddle" class="paddle">
+            Play As Right
+          </div>
+        </a>
+      </div>
+      <hr>
+      <div id="button_bar" class="button_bar">
+        <a href="#">
+          <div id="up_button" class="paddle">
+            UP PADDLE
+          </div>
+        </a>
+        <a href="#">
+          <div id="down_button" class="paddle">
+            DOWN PADDLE
+          </div>
+        </a>
+      </div>
+
+
+
+      <!-- <div id="detector" class="vague">
+      <div class="pitch"><span id="pitch">--</span>Hz</div>
+      <div class="note"><span id="note">--</span></div>
+      <canvas id="output" width=300 height=42></canvas>
+      <div id="detune"><span id="detune_amt">--</span><span id="flat">cents &#9837;</span><span id="sharp">cents &#9839;</span></div>
+      </div>
+      <canvas id="waveform" width="512" height="256">  </canvas> -->
+
+    </body>
+</html>
+
+<script>
+  $('#left_paddle').click(function(e){
+      console.log("Left Paddle Clicked!");
+      socket.emit("PLAY LEFT");
+      e.preventDefault();
+      return false;
+  });
+  $('#right_paddle').click(function(e){
+      console.log("Right Paddle Clicked!");
+      socket.emit("PLAY RIGHT");
+      e.preventDefault();
+      return false;
+  });
+
+  $('#up_button').click(function(e){
+      console.log("PADDLE UP!");
+      socket.emit("UP");
+      e.preventDefault();
+      return false;
+  });
+  $('#down_button').click(function(e){
+      console.log("PADDLE DOWN!");
+      socket.emit("DOWN");
+      e.preventDefault();
+      return false;
+  });
+
+  var socket;
+
+  function pageLoad() {
+      socket = io();
+
+      toggleLiveInput();
+
+      socket.on('COMMAND', function(argument) {
+          $('.button').click(function(key) {
+              socket.emit("SOME COMMAND", argument);
+          });
+      });
+
+      socket.on('STATE', function(state) {
+        if(state.started){
+
+        }
+      });
+
+      console.log("Player initialised");
+
+      socket.emit("LEFT PADDLE");
+  }
+
+  document.addEventListener('DOMContentLoaded', pageLoad);
+
+
+</script>
